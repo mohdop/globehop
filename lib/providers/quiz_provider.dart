@@ -33,6 +33,7 @@ class QuizProvider with ChangeNotifier {
   bool _usedFiftyFifty = false;
   List<Country> _removedOptions = [];
   bool _isLoadingHistory = false;
+  String? _currentHint; // Add hint storage
 
   // Getters
   List<QuizQuestion> get questions => _questions;
@@ -54,6 +55,7 @@ class QuizProvider with ChangeNotifier {
   bool get usedFiftyFifty => _usedFiftyFifty;
   List<Country> get removedOptions => _removedOptions;
   bool get isLoadingHistory => _isLoadingHistory;
+  String? get currentHint => _currentHint;
   
   QuizQuestion? get currentQuestion {
     if (_currentQuestionIndex < _questions.length) {
@@ -89,6 +91,7 @@ class QuizProvider with ChangeNotifier {
     _difficulty = difficulty;
     _usedFiftyFifty = false;
     _removedOptions.clear();
+    _currentHint = null; // Reset hint
 
     if (allCountries.length < 4) {
       debugPrint('❌ Not enough countries to generate quiz');
@@ -101,12 +104,45 @@ class QuizProvider with ChangeNotifier {
     debugPrint('✅ Generating $type quiz with ${quizCountries.length} questions');
 
     for (var correctCountry in quizCountries) {
-      final otherCountries = allCountries
-          .where((c) => c.cca3 != correctCountry.cca3)
-          .toList();
+      List<Country> wrongAnswers;
       
-      otherCountries.shuffle();
-      final wrongAnswers = otherCountries.take(3).toList();
+      if (type == QuizType.region) {
+        // For region quiz, ensure we get countries from different regions
+        final correctRegion = correctCountry.region;
+        final availableRegions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
+            .where((r) => r != correctRegion)
+            .toList();
+        
+        wrongAnswers = [];
+        for (var region in availableRegions.take(3)) {
+          final countriesInRegion = allCountries
+              .where((c) => c.region == region)
+              .toList();
+          if (countriesInRegion.isNotEmpty) {
+            countriesInRegion.shuffle();
+            wrongAnswers.add(countriesInRegion.first);
+          }
+        }
+        
+        // If we couldn't get 3 different regions, fill with any other countries
+        if (wrongAnswers.length < 3) {
+          final remaining = allCountries
+              .where((c) => c.cca3 != correctCountry.cca3 && 
+                           !wrongAnswers.any((w) => w.cca3 == c.cca3))
+              .toList();
+          remaining.shuffle();
+          wrongAnswers.addAll(remaining.take(3 - wrongAnswers.length));
+        }
+      } else {
+        // For other quiz types, pick any 3 random countries
+        final otherCountries = allCountries
+            .where((c) => c.cca3 != correctCountry.cca3)
+            .toList();
+        
+        otherCountries.shuffle();
+        wrongAnswers = otherCountries.take(3).toList();
+      }
+      
       final options = [correctCountry, ...wrongAnswers]..shuffle();
 
       _questions.add(QuizQuestion(
@@ -186,6 +222,7 @@ class QuizProvider with ChangeNotifier {
       _hasAnswered = false;
       _usedFiftyFifty = false;
       _removedOptions.clear();
+      _currentHint = null; // Reset hint for next question
       notifyListeners();
     } else {
       await finishQuiz();
@@ -218,10 +255,42 @@ class QuizProvider with ChangeNotifier {
   }
 
   void useHint() {
-    if (_powerUps[PowerUpType.hint]! <= 0 || _hasAnswered) return;
+    if (_powerUps[PowerUpType.hint]! <= 0 || _hasAnswered || _currentHint != null) return;
     
     _powerUps[PowerUpType.hint] = _powerUps[PowerUpType.hint]! - 1;
-    // Hint shows the region or first letter
+    
+    final question = currentQuestion;
+    if (question != null) {
+      // Generate hint based on quiz type
+      switch (question.type) {
+        case QuizType.flag:
+          // Show first letter of country name
+          _currentHint = '💡 First letter: ${question.correctAnswer.name[0]}';
+          break;
+        case QuizType.capital:
+          // Show first letter of capital
+          _currentHint = '💡 First letter: ${question.correctAnswer.capital[0]}';
+          break;
+        case QuizType.region:
+          // Show continent
+          _currentHint = '💡 Continent: ${question.correctAnswer.continents.first}';
+          break;
+        case QuizType.population:
+          // Show population range
+          final pop = question.correctAnswer.population;
+          if (pop > 100000000) {
+            _currentHint = '💡 Population: Over 100 million';
+          } else if (pop > 50000000) {
+            _currentHint = '💡 Population: 50-100 million';
+          } else if (pop > 10000000) {
+            _currentHint = '💡 Population: 10-50 million';
+          } else {
+            _currentHint = '💡 Population: Under 10 million';
+          }
+          break;
+      }
+    }
+    
     notifyListeners();
   }
 

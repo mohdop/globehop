@@ -103,6 +103,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                         children: [
                           _buildQuestionCard(question, quizProvider),
                           const SizedBox(height: 24),
+                          if (quizProvider.currentHint != null)
+                            _buildHintDisplay(quizProvider.currentHint!),
+                          if (quizProvider.currentHint != null)
+                            const SizedBox(height: 24),
                           _buildOptions(question, quizProvider),
                           if (quizProvider.hasAnswered) ...[
                             const SizedBox(height: 24),
@@ -251,7 +255,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             icon: Icons.lightbulb_outline,
             label: 'Hint',
             count: quizProvider.powerUps[PowerUpType.hint] ?? 0,
-            enabled: !quizProvider.hasAnswered,
+            enabled: !quizProvider.hasAnswered && quizProvider.currentHint == null,
             onTap: () => quizProvider.useHint(),
           ),
         ],
@@ -361,16 +365,29 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                if (question.type == QuizType.capital)
+                if (question.type == QuizType.capital || question.type == QuizType.region)
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: AppTheme.candyGradient,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      question.correctAnswer.flag,
-                      style: const TextStyle(fontSize: 80),
+                    child: Column(
+                      children: [
+                        Text(
+                          question.correctAnswer.flag,
+                          style: const TextStyle(fontSize: 80),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          question.correctAnswer.name,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   ),
               ],
@@ -471,7 +488,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                       child: Text(
                         question.type == QuizType.capital 
                             ? country.capital
-                            : country.name,
+                            : question.type == QuizType.region
+                                ? country.region
+                                : country.name,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -518,6 +537,54 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           const SizedBox(width: 8),
           Icon(isLastQuestion ? Icons.check : Icons.arrow_forward),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHintDisplay(String hint) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 500),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: AppTheme.joyGradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.mangoYellow.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.lightbulb,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              hint,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
