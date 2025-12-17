@@ -76,11 +76,11 @@ Choose from **3 quiz types**:
 
 | Home Screen | Quiz Mode | Country Details |
 |-------------|-----------|-----------------|
-| ![Home](screenshots/home.png) | ![Quiz](screenshots/quiz.png) | ![Details](screenshots/details.png) |
+| ![Home](~/Downloads/GLOBEHOP\ SCREENSHOTS/home.jpg) | ![Quiz](~/Downloads/GLOBEHOP\ SCREENSHOTS/quiz.jpg) | ![Details](~/Downloads/GLOBEHOP\ SCREENSHOTS/details.jpg) |
 
 | Comparison | Achievements | Quiz Results |
 |------------|--------------|--------------|
-| ![Compare](screenshots/compare.png) | ![Achievements](screenshots/achievements.png) | ![Results](screenshots/results.png) |
+| ![Compare](~/Downloads/GLOBEHOP\ SCREENSHOTS/compare.jpg) | ![Achievements](~/Downloads/GLOBEHOP\ SCREENSHOTS/achievements.jpg) | ![Results](~/Downloads/GLOBEHOP\ SCREENSHOTS/results.jpg) |
 
 </div>
 
