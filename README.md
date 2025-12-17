@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![GlobeHop Logo](assets/images/logo.png)
+![GlobeHop Logo](assets/images/GLOBEHOP_NO_BG512.png)
 
 **Explore the world, one hop at a time!**
 
