@@ -98,7 +98,7 @@ Choose from **3 quiz types**:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/globehop.git
+git clone https://github.com/mohdop/globehop.git
 cd globehop
 ```
 
