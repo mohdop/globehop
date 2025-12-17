@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
+import '../l10n/app_localizations.dart';
 import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -118,13 +119,31 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               // Tagline
               FadeTransition(
                 opacity: _fadeAnimation,
-                child: Text(
-                  'Explore the world, one hop at a time!',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Builder(
+                  builder: (context) {
+                    // Safely get localization with fallback
+                    try {
+                      final l10n = AppLocalizations.of(context);
+                      return Text(
+                        l10n.appTagline,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    } catch (e) {
+                      // Fallback if localization not ready
+                      return Text(
+                        'Explore the world, one hop at a time!',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 60),

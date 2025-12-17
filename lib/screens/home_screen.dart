@@ -7,6 +7,7 @@ import '../services/api_service.dart';
 import '../widgets/country_card.dart';
 import '../widgets/loading_shimmer.dart';
 import '../models/quiz_question.dart';
+import '../l10n/app_localizations.dart';
 import 'country_detail_screen.dart';
 import 'quiz_screen.dart';
 import 'quiz_history_screen.dart';
@@ -173,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context.read<CountriesProvider>().searchCountries(value);
         },
         decoration: InputDecoration(
-          hintText: 'Search countries...',
+          hintText: AppLocalizations.of(context).searchCountries,
           prefixIcon: const Icon(Icons.search, color: AppTheme.midGray),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
