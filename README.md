@@ -80,7 +80,7 @@ Choose from **3 quiz types**:
 
 | Comparison | Achievements | Quiz Results |
 |------------|--------------|--------------|
-| ![Compare](SCREENSHOTS/compare.jpg) | ![Achievements](SCREENSHOTS/achievements.jpg) | ![Results](SCREENSHOTS/results.jpg) |
+| ![Compare](SCREENSHOTS/compare.jpg) | ![Results](SCREENSHOTS/results.jpg) |
 
 </div>
 
