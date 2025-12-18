@@ -1,4 +1,4 @@
-package com.example.globehop
+package com.globehop.app
 
 import io.flutter.embedding.android.FlutterActivity
 
